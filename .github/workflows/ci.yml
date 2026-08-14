@@ -157,5 +157,10 @@ jobs:
         with:
           credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
+      # The webframeworks (Next.js SSR) integration is still an opt-in CLI experiment, stored
+      # in per-machine firebase-tools config rather than the repo — each fresh runner needs it.
+      - name: Enable Firebase web frameworks support
+        run: npx firebase-tools experiments:enable webframeworks
+
       - name: Deploy to Firebase Hosting + Firestore rules
         run: npx firebase-tools deploy --only hosting,firestore:rules --project careerhub-app-36084 --non-interactive
