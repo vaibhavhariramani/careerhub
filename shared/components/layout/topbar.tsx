@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { LogOut, Settings, UserRound } from "lucide-react";
+import { LogIn, LogOut, Settings, UserRound } from "lucide-react";
+import { signOut } from "firebase/auth";
 import { MobileNav } from "@/shared/components/layout/mobile-nav";
 import { ThemeToggle } from "@/shared/components/layout/theme-toggle";
 import { Avatar } from "@/shared/components/ui/avatar";
@@ -13,9 +14,13 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { useProfileStore } from "@/features/profile/store";
+import { useAuthStore } from "@/features/auth/store";
+import { auth } from "@/shared/lib/firebase-client";
 
 export function Topbar() {
-  const name = useProfileStore((s) => s.profile.fullName) || "Guest";
+  const profileName = useProfileStore((s) => s.profile.fullName);
+  const user = useAuthStore((s) => s.user);
+  const name = user?.displayName || profileName || "Guest";
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-md lg:px-8">
@@ -40,11 +45,17 @@ export function Topbar() {
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/">
-                <LogOut className="h-4 w-4" /> Exit to landing
-              </Link>
-            </DropdownMenuItem>
+            {user ? (
+              <DropdownMenuItem onSelect={() => void signOut(auth)}>
+                <LogOut className="h-4 w-4" /> Sign out
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem asChild>
+                <Link href="/login">
+                  <LogIn className="h-4 w-4" /> Sign in
+                </Link>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

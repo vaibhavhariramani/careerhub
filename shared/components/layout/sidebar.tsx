@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { primaryNav, secondaryNav } from "@/core/config/navigation";
+import { adminNav, primaryNav, secondaryNav } from "@/core/config/navigation";
 import { Logo } from "@/shared/components/layout/logo";
+import { useAuthStore } from "@/features/auth/store";
 import { cn } from "@/shared/lib/cn";
 
 function NavLink({ href, label, icon: Icon }: (typeof primaryNav)[number]) {
@@ -27,6 +28,8 @@ function NavLink({ href, label, icon: Icon }: (typeof primaryNav)[number]) {
 }
 
 export function Sidebar() {
+  const isAdmin = useAuthStore((s) => s.isAdmin);
+
   return (
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-border bg-card/40 px-4 py-5 lg:flex">
       <Logo href="/dashboard" className="px-2" />
@@ -38,6 +41,7 @@ export function Sidebar() {
         {secondaryNav.map((item) => (
           <NavLink key={item.href} {...item} />
         ))}
+        {isAdmin && <NavLink {...adminNav} />}
       </nav>
     </aside>
   );

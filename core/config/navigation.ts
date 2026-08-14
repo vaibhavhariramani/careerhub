@@ -9,6 +9,7 @@ import {
   Bookmark,
   UserRound,
   Settings,
+  ShieldCheck,
 } from "lucide-react";
 
 export interface NavItem {
@@ -31,3 +32,5 @@ export const secondaryNav: NavItem[] = [
   { label: "Profile", href: "/profile", icon: UserRound },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
+
+export const adminNav: NavItem = { label: "Admin", href: "/admin", icon: ShieldCheck };

@@ -5,14 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Menu, X } from "lucide-react";
-import { primaryNav, secondaryNav } from "@/core/config/navigation";
+import { adminNav, primaryNav, secondaryNav } from "@/core/config/navigation";
 import { Logo } from "@/shared/components/layout/logo";
 import { Button } from "@/shared/components/ui/button";
+import { useAuthStore } from "@/features/auth/store";
 import { cn } from "@/shared/lib/cn";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const isAdmin = useAuthStore((s) => s.isAdmin);
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
@@ -33,7 +35,7 @@ export function MobileNav() {
             </DialogPrimitive.Close>
           </div>
           <nav className="mt-8 flex flex-1 flex-col gap-1">
-            {[...primaryNav, ...secondaryNav].map(({ href, label, icon: Icon }) => {
+            {[...primaryNav, ...secondaryNav, ...(isAdmin ? [adminNav] : [])].map(({ href, label, icon: Icon }) => {
               const active = pathname === href || pathname.startsWith(`${href}/`);
               return (
                 <Link

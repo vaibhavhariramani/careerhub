@@ -1,0 +1,160 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
+
+permissions:
+  contents: read
+
+jobs:
+  code-scan:
+    name: Code scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Dependency audit (non-blocking)
+        run: npm audit --audit-level=critical
+        continue-on-error: true
+
+      - name: Run CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+
+  build:
+    name: Build app
+    needs: code-scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: next-build
+          path: |
+            .next
+            public
+          retention-days: 1
+
+  smoke-test:
+    name: Smoke test
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: next-build
+
+      - name: Start server
+        run: nohup npm run start -- -p 3000 > server.log 2>&1 &
+
+      - name: Wait for server to be ready
+        run: |
+          for i in $(seq 1 30); do
+            if curl -s -o /dev/null "http://localhost:3000/"; then
+              echo "Server is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server never became ready"
+          cat server.log
+          exit 1
+
+      - name: Check key routes respond
+        run: |
+          set -e
+          fail=0
+          for path in / /dashboard /resume-scanner /resume-builder /interview-prep /question-bank /jobs /login /api/jobs; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:3000$path")
+            echo "$path -> $code"
+            if [ "$code" -ge 500 ] || [ "$code" -eq 000 ]; then
+              echo "::error::Smoke test failed for $path (HTTP $code)"
+              fail=1
+            fi
+          done
+          if [ "$fail" -eq 1 ]; then
+            cat server.log
+            exit 1
+          fi
+
+  deploy:
+    name: Deploy to Firebase Hosting
+    needs: smoke-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - run: npm ci
+
+      # Server-only secrets (never NEXT_PUBLIC_*) get embedded into the built Cloud
+      # Function at build time. This file only exists on the CI runner and is never committed.
+      - name: Write server-only env for the build
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM_EMAIL: ${{ secrets.RESEND_FROM_EMAIL }}
+        run: |
+          : > .env.production
+          if [ -n "$RESEND_API_KEY" ]; then echo "RESEND_API_KEY=$RESEND_API_KEY" >> .env.production; fi
+          if [ -n "$RESEND_FROM_EMAIL" ]; then echo "RESEND_FROM_EMAIL=$RESEND_FROM_EMAIL" >> .env.production; fi
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Deploy to Firebase Hosting + Firestore rules
+        run: npx firebase-tools deploy --only hosting,firestore:rules --project careerhub-app-36084 --non-interactive
