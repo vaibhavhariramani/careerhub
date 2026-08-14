@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 12%;
+
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 12%;
+
+  --muted: 240 5% 96%;
+  --muted-foreground: 240 4% 46%;
+
+  --border: 240 6% 90%;
+  --input: 240 6% 90%;
+  --ring: 250 84% 60%;
+
+  --accent: 250 84% 60%;
+  --accent-foreground: 0 0% 100%;
+  --accent-soft: 250 84% 96%;
+
+  --success: 152 60% 36%;
+  --success-soft: 152 60% 94%;
+  --warning: 38 92% 46%;
+  --warning-soft: 38 92% 94%;
+  --danger: 0 72% 51%;
+  --danger-soft: 0 72% 95%;
+}
+
+.dark {
+  --background: 240 10% 6%;
+  --foreground: 0 0% 96%;
+
+  --card: 240 9% 9%;
+  --card-foreground: 0 0% 96%;
+
+  --muted: 240 6% 14%;
+  --muted-foreground: 240 5% 64%;
+
+  --border: 240 6% 18%;
+  --input: 240 6% 18%;
+  --ring: 250 84% 66%;
+
+  --accent: 250 84% 66%;
+  --accent-foreground: 0 0% 100%;
+  --accent-soft: 250 50% 18%;
+
+  --success: 152 55% 48%;
+  --success-soft: 152 45% 16%;
+  --warning: 38 92% 56%;
+  --warning-soft: 38 60% 16%;
+  --danger: 0 70% 60%;
+  --danger-soft: 0 55% 18%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+::selection {
+  background: hsl(var(--accent) / 0.25);
+}
+
+/* Print styles for PDF export via window.print() (resume templates + ATS report) */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  @page {
+    margin: 0.5in;
+  }
+}
