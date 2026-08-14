@@ -1,8 +1,37 @@
-# CareerHub
+<p align="center">
+  <img src="docs/logo.svg" width="88" height="88" alt="CareerHub logo" />
+</p>
 
-**Build Your Dream Career.** Everything you need to land your next internship or job in one
-place — a free ATS resume scanner, a guided resume builder, interview prep, a searchable
-question bank, and live job search, all running in your browser.
+<h1 align="center">CareerHub</h1>
+
+<p align="center"><strong>Build Your Dream Career.</strong></p>
+
+<p align="center">
+  <a href="https://careerhub-app-36084.web.app"><strong>🚀 Live app: careerhub-app-36084.web.app</strong></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/vaibhavhariramani/careerhub/actions/workflows/ci.yml">
+    <img src="https://github.com/vaibhavhariramani/careerhub/actions/workflows/ci.yml/badge.svg" alt="CI status" />
+  </a>
+</p>
+
+Everything you need to land your next internship or job in one place — a free ATS resume
+scanner, a guided resume builder, interview prep, a searchable question bank, and live job
+search. Scanning, building, and practicing all run client-side in your browser; the only thing
+that touches a server is the optional account you create to save a resume in progress.
+
+## Screenshots
+
+| ![Landing page](docs/screenshots/landing.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+|:--:|:--:|
+| Landing page | Dashboard overview |
+| ![ATS Resume Scanner](docs/screenshots/resume-scanner.png) | ![Live job search](docs/screenshots/jobs.png) |
+| ATS Resume Scanner | Live job search (Remotive + Arbeitnow) |
+| ![Interview Prep](docs/screenshots/interview-prep.png) | ![Question Bank](docs/screenshots/question-bank.png) |
+| Interview Prep guides | Searchable Question Bank |
+| ![Sign in](docs/screenshots/login.png) | ![Resume Builder sign-in gate](docs/screenshots/resume-builder.png) |
+| Email/password + Google sign-in | Resume Builder (sign-in required) |
 
 ## Why it's lightweight
 
