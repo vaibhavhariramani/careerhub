@@ -7,7 +7,7 @@
 <p align="center"><strong>Build Your Dream Career.</strong></p>
 
 <p align="center">
-  <a href="https://careerhub-app-36084.web.app"><strong>🚀 Live app: careerhub-app-36084.web.app</strong></a>
+  <a href="https://careerhub-app.web.app"><strong>🚀 Live app: careerhub-app.web.app</strong></a>
 </p>
 
 <p align="center">
@@ -108,9 +108,30 @@ an API route — no caller code changes.
 
 Deployed on **Firebase Hosting** via its Next.js Web Frameworks integration (SSR runs in a Cloud
 Function on the Blaze plan — required for the `/api/jobs` revalidation window and the
-`/api/admin/*` routes). `firebase.json` + `.firebaserc` point at the `careerhub-app-*` project.
+`/api/admin/*` routes), served from the `careerhub-app` Hosting site inside the
+`careerhub-app-36084` project (`firebase.json`'s `hosting.target` + the `app` target in
+`.firebaserc` point deploys at it — see `firebase hosting:sites:list` to inspect).
 
 Also works zero-config on **Vercel** as a stock Next.js app.
+
+### SEO
+
+- Per-route `<title>`/description via route-segment `layout.tsx` metadata exports (resume
+  scanner, resume builder, jobs, interview prep, question bank), templated as `%s | CareerHub`
+- `app/sitemap.ts` and `app/robots.ts` (dynamic, Next.js file conventions) → `/sitemap.xml`,
+  `/robots.txt`, disallowing `/admin` and `/api/`
+- `app/opengraph-image.tsx` — generated 1200×630 OG/Twitter card image; `app/manifest.ts` for
+  installability
+- JSON-LD (`Organization` + `WebSite` + `SoftwareApplication`) on the landing page
+- Canonical URLs via `metadataBase` + per-page `alternates.canonical`
+
+None of this can guarantee a #1 ranking for a generic term like "careerhub" — several unrelated
+products share the name, and ranking depends on backlinks, crawl history, and time indexed, none
+of which code changes control. What it does do: make the site fully crawlable and correctly
+described so Google *can* index and rank it well once discovered. Speed that up by submitting
+`https://careerhub-app.web.app/sitemap.xml` in [Google Search
+Console](https://search.google.com/search-console) (requires verifying domain ownership, which
+needs you to sign in — not something scriptable).
 
 ### CI/CD
 

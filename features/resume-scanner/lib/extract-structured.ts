@@ -118,7 +118,9 @@ function buildEducation(section: SectionMatch | undefined) {
   if (!section) return [];
   return splitIntoBlocks(section.text).map((block) => {
     const { startDate, endDate, rest } = extractDateRange(block.header);
-    const degreeMatch = rest.match(/\b(bachelor|master|b\.?s\.?|m\.?s\.?|b\.?a\.?|phd|diploma|associate)[^,|]*/i);
+    const degreeMatch = rest.match(
+      /\b(bachelor|master|ph\.?d|m\.?sc\.?|b\.?sc\.?|b\.?eng\.?|m\.?eng\.?|b\.?tech\.?|m\.?tech\.?|mba|b\.?s\.?|m\.?s\.?|b\.?a\.?|phd|diploma|associate)[^,|]*/i,
+    );
     let degree = "";
     let school = rest;
     if (degreeMatch) {

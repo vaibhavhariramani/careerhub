@@ -153,7 +153,10 @@ export function scoreResume(
     if (!section) {
       notes.push("No Education section detected.");
     } else {
-      const hasDegreeWord = /\b(bachelor|master|b\.?s\.?|m\.?s\.?|b\.?a\.?|phd|diploma|associate)\b/i.test(section.text);
+      const hasDegreeWord =
+        /\b(bachelor|master|ph\.?d|m\.?sc\.?|b\.?sc\.?|b\.?eng\.?|m\.?eng\.?|b\.?tech\.?|m\.?tech\.?|mba|b\.?s\.?|m\.?s\.?|b\.?a\.?|phd|diploma|associate)\b/i.test(
+          section.text,
+        );
       score = clamp(hasDegreeWord ? 90 : 60);
       notes.push(hasDegreeWord ? "Degree information found." : "Consider clarifying your degree title.");
     }

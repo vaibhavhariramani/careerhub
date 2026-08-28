@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "careerhub-app-36084"
-  }
+  },
+  "targets": {
+    "careerhub-app-36084": {
+      "hosting": {
+        "app": [
+          "careerhub-app"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
