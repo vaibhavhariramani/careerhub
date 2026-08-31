@@ -39,6 +39,11 @@ export const metadata: Metadata = {
     title: `${siteConfig.name} — ${siteConfig.tagline}`,
     description: siteConfig.description,
   },
+  verification: {
+    // Backup to the /googlef1df04618cf0062e.html file verification method — Search Console
+    // allows multiple verification methods to stay active on the same property at once.
+    google: "wzQgKXcHkede-2wo5UnuPh3VmOh79yjN7S2uzrNZCWI",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
